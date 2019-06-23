@@ -106,9 +106,6 @@ public class FileSourceTask extends SourceTask {
             }
         }
 
-        // Unfortunately we can't just use readLine() because it blocks in an uninterruptible way.
-        // Instead we have to manage splitting lines ourselves, using simple backoff when no new data
-        // is available.
         try {
             final BufferedReader readerCopy;
             synchronized (this) {
@@ -174,8 +171,6 @@ public class FileSourceTask extends SourceTask {
 
             return records;
         } catch (IOException e) {
-            // Underlying stream was killed, probably as a result of calling stop. Allow to return
-            // null, and driving thread will handle any shutdown if necessary.
         } catch (InterruptedException e) {
             log.error("Interrupt error .", e);
         }
@@ -217,7 +212,6 @@ public class FileSourceTask extends SourceTask {
         fileConfig.load(props);
         if (fileConfig.getFilename() == null || fileConfig.getFilename().isEmpty()) {
             stream = System.in;
-            // Tracking offset for stdin doesn't make sense
             streamOffset = null;
             reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
         }
