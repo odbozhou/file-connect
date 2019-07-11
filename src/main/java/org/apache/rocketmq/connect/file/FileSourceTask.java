@@ -151,7 +151,8 @@ public class FileSourceTask extends SourceTask {
                             DataEntryBuilder dataEntryBuilder = new DataEntryBuilder(schema)
                                 .entryType(EntryType.CREATE)
                                 .queue(fileConfig.getTopic())
-                                .timestamp(System.currentTimeMillis());
+                                .timestamp(System.currentTimeMillis())
+                                .putFiled(FileConstants.FILE_LINE_CONTENT, line);
                             final SourceDataEntry sourceDataEntry = dataEntryBuilder.buildSourceDataEntry(offsetKey(fileConfig.getFilename()), offsetValue(streamOffset));
                             records.add(sourceDataEntry);
                             if (records.size() >= batchSize) {
