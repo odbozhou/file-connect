@@ -1,6 +1,10 @@
 package org.apache.rocketmq.connect.file;
 
 import io.openmessaging.KeyValue;
+import io.openmessaging.connector.api.common.QueueMetaData;
+import io.openmessaging.connector.api.data.Field;
+import io.openmessaging.connector.api.data.FieldType;
+import io.openmessaging.connector.api.data.Schema;
 import io.openmessaging.connector.api.data.SinkDataEntry;
 import io.openmessaging.connector.api.exception.ConnectException;
 import io.openmessaging.connector.api.sink.SinkTask;
@@ -11,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +30,24 @@ public class FileSinkTask extends SinkTask {
 
     @Override public void put(Collection<SinkDataEntry> sinkDataEntries) {
         for (SinkDataEntry record : sinkDataEntries) {
-            log.trace("Writing line to {}: {}", logFilename(), record.getPayload());
-            outputStream.println(record.getPayload());
+            Object[] payloads = record.getPayload();
+            log.trace("Writing line to {}: {}", logFilename(), payloads);
+            Schema schema = record.getSchema();
+            List<Field> fields = schema.getFields();
+            for (Field field : fields) {
+                FieldType type = field.getType();
+                if (type.equals(FieldType.STRING)) {
+                    log.info("Writing line to {}: {}", logFilename(), payloads[field.getIndex()]);
+                    outputStream.println(String.valueOf(payloads[field.getIndex()]));
+                }
+            }
         }
+
+    }
+
+    @Override public void commit(Map<QueueMetaData, Long> map) {
+        log.trace("Flushing output stream for {}", logFilename());
+        outputStream.flush();
     }
 
     @Override public void start(KeyValue props) {

@@ -34,7 +34,7 @@ public class FileConfig {
 
     public static final Set<String> REQUEST_CONFIG = new HashSet<String>() {
         {
-            add(TOPIC_CONFIG);
+//            add(TOPIC_CONFIG);
             add(FILE_CONFIG);
         }
     };

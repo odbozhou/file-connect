@@ -153,7 +153,7 @@ public class FileSourceTask extends SourceTask {
                                 .queue(fileConfig.getTopic())
                                 .timestamp(System.currentTimeMillis())
                                 .putFiled(FileConstants.FILE_LINE_CONTENT, line);
-                            final SourceDataEntry sourceDataEntry = dataEntryBuilder.buildSourceDataEntry(offsetKey(fileConfig.getFilename()), offsetValue(streamOffset));
+                            final SourceDataEntry sourceDataEntry = dataEntryBuilder.buildSourceDataEntry(offsetKey(FileConstants.getPartition(fileConfig.getFilename())), offsetValue(streamOffset));
                             records.add(sourceDataEntry);
                             if (records.size() >= batchSize) {
                                 return records;
