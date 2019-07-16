@@ -141,7 +141,7 @@ public class FileSourceTask extends SourceTask {
                             Schema schema = new Schema();
                             schema.setDataSource(fileConfig.getFilename());
                             schema.setName(fileConfig.getFilename() + LINE);
-                            Field field = new Field(0, FileConstants.FILE_LINE_CONTENT, FieldType.STRING);
+                            final Field field = new Field(0, FileConstants.FILE_LINE_CONTENT, FieldType.STRING);
                             List<Field> fields = new ArrayList<Field>() {
                                 {
                                     add(field);
